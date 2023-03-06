@@ -1,0 +1,452 @@
+# -*- mode: yaml -*-
+
+manifest:
+  version: 1.0
+
+automations:
+  {% for client in clients %}
+  add_client_label_{{ client.name | lower }}:
+    if:
+      - {{ files | match(regex=client.regex) | some }}
+    run:
+      - action: add-label@v1
+        args:
+          label: {{ client.name }}
+
+  approve_owned_nonprod_changes_{{ client.name | lower }}:
+    if:
+      - {{ files | match(regex=client.regex) | every }}
+      - {{ files | match(regex=r/\/production\//) | nope }}
+      - {{ pr.author_teams | match(term=client.team) | some }}
+    run:
+      - action: approve@v1
+      - action: add-label@v1
+        args:
+          label: "auto-approved"
+          color: "36A853"
+
+  require_review_of_owned_prod_changes_{{ client.name | lower }}:
+    if:
+      - {{ files | filter(regex=client.regex) | match(regex=r/\/production\//) | some }}
+      - {{ pr.author_teams | match(term=client.team) | some }}
+    run:
+      - action: add-reviewers@v1
+        args:
+          team_reviewers: [{{ client.team | lower | replace(" - ", "-") | replace(" ", "-") }}]
+      - action: require-reviewers@v1
+        args:
+          team_reviewers: [{{ client.team | lower | replace(" - ", "-") | replace(" ", "-") }}]
+
+  require_review_by_owners_{{ client.name | lower }}:
+    if:
+      - {{ files | match(regex=client.regex) | some }}
+      - {{ pr.author_teams | match(term=client.team) | nope }}
+    run:
+      - action: add-reviewers@v1
+        args:
+          team_reviewers: [{{ client.team | lower | replace(" - ", "-") | replace(" ", "-") }}]
+      - action: require-reviewers@v1
+        args:
+          team_reviewers: [{{ client.team | lower | replace(" - ", "-") | replace(" ", "-") }}]
+  {% endfor %}
+
+clients:
+- name: "TEAM001"
+  regex: "r/^TEAM001\//"
+  team: "team-001"
+
+- name: "TEAM002"
+  regex: "r/^TEAM002\//"
+  team: "team-002"
+
+- name: "TEAM003"
+  regex: "r/^TEAM003\//"
+  team: "team-003"
+
+- name: "TEAM004"
+  regex: "r/^TEAM004\//"
+  team: "team-004"
+
+- name: "TEAM005"
+  regex: "r/^TEAM005\//"
+  team: "team-005"
+
+- name: "TEAM006"
+  regex: "r/^TEAM006\//"
+  team: "team-006"
+
+- name: "TEAM007"
+  regex: "r/^TEAM007\//"
+  team: "team-007"
+
+- name: "TEAM008"
+  regex: "r/^TEAM008\//"
+  team: "team-008"
+
+- name: "TEAM009"
+  regex: "r/^TEAM009\//"
+  team: "team-009"
+
+- name: "TEAM010"
+  regex: "r/^TEAM010\//"
+  team: "team-010"
+
+- name: "TEAM011"
+  regex: "r/^TEAM011\//"
+  team: "team-011"
+
+- name: "TEAM012"
+  regex: "r/^TEAM012\//"
+  team: "team-012"
+
+- name: "TEAM013"
+  regex: "r/^TEAM013\//"
+  team: "team-013"
+
+- name: "TEAM014"
+  regex: "r/^TEAM014\//"
+  team: "team-014"
+
+- name: "TEAM015"
+  regex: "r/^TEAM015\//"
+  team: "team-015"
+
+- name: "TEAM016"
+  regex: "r/^TEAM016\//"
+  team: "team-016"
+
+- name: "TEAM017"
+  regex: "r/^TEAM017\//"
+  team: "team-017"
+
+- name: "TEAM018"
+  regex: "r/^TEAM018\//"
+  team: "team-018"
+
+- name: "TEAM019"
+  regex: "r/^TEAM019\//"
+  team: "team-019"
+
+- name: "TEAM020"
+  regex: "r/^TEAM020\//"
+  team: "team-020"
+
+- name: "TEAM021"
+  regex: "r/^TEAM021\//"
+  team: "team-021"
+
+- name: "TEAM022"
+  regex: "r/^TEAM022\//"
+  team: "team-022"
+
+- name: "TEAM023"
+  regex: "r/^TEAM023\//"
+  team: "team-023"
+
+- name: "TEAM024"
+  regex: "r/^TEAM024\//"
+  team: "team-024"
+
+- name: "TEAM025"
+  regex: "r/^TEAM025\//"
+  team: "team-025"
+
+- name: "TEAM026"
+  regex: "r/^TEAM026\//"
+  team: "team-026"
+
+- name: "TEAM027"
+  regex: "r/^TEAM027\//"
+  team: "team-027"
+
+- name: "TEAM028"
+  regex: "r/^TEAM028\//"
+  team: "team-028"
+
+- name: "TEAM029"
+  regex: "r/^TEAM029\//"
+  team: "team-029"
+
+- name: "TEAM030"
+  regex: "r/^TEAM030\//"
+  team: "team-030"
+
+- name: "TEAM031"
+  regex: "r/^TEAM031\//"
+  team: "team-031"
+
+- name: "TEAM032"
+  regex: "r/^TEAM032\//"
+  team: "team-032"
+
+- name: "TEAM033"
+  regex: "r/^TEAM033\//"
+  team: "team-033"
+
+- name: "TEAM034"
+  regex: "r/^TEAM034\//"
+  team: "team-034"
+
+- name: "TEAM035"
+  regex: "r/^TEAM035\//"
+  team: "team-035"
+
+- name: "TEAM036"
+  regex: "r/^TEAM036\//"
+  team: "team-036"
+
+- name: "TEAM037"
+  regex: "r/^TEAM037\//"
+  team: "team-037"
+
+- name: "TEAM038"
+  regex: "r/^TEAM038\//"
+  team: "team-038"
+
+- name: "TEAM039"
+  regex: "r/^TEAM039\//"
+  team: "team-039"
+
+- name: "TEAM040"
+  regex: "r/^TEAM040\//"
+  team: "team-040"
+
+- name: "TEAM041"
+  regex: "r/^TEAM041\//"
+  team: "team-041"
+
+- name: "TEAM042"
+  regex: "r/^TEAM042\//"
+  team: "team-042"
+
+- name: "TEAM043"
+  regex: "r/^TEAM043\//"
+  team: "team-043"
+
+- name: "TEAM044"
+  regex: "r/^TEAM044\//"
+  team: "team-044"
+
+- name: "TEAM045"
+  regex: "r/^TEAM045\//"
+  team: "team-045"
+
+- name: "TEAM046"
+  regex: "r/^TEAM046\//"
+  team: "team-046"
+
+- name: "TEAM047"
+  regex: "r/^TEAM047\//"
+  team: "team-047"
+
+- name: "TEAM048"
+  regex: "r/^TEAM048\//"
+  team: "team-048"
+
+- name: "TEAM049"
+  regex: "r/^TEAM049\//"
+  team: "team-049"
+
+- name: "TEAM050"
+  regex: "r/^TEAM050\//"
+  team: "team-050"
+
+- name: "TEAM051"
+  regex: "r/^TEAM051\//"
+  team: "team-051"
+
+- name: "TEAM052"
+  regex: "r/^TEAM052\//"
+  team: "team-052"
+
+- name: "TEAM053"
+  regex: "r/^TEAM053\//"
+  team: "team-053"
+
+- name: "TEAM054"
+  regex: "r/^TEAM054\//"
+  team: "team-054"
+
+- name: "TEAM055"
+  regex: "r/^TEAM055\//"
+  team: "team-055"
+
+- name: "TEAM056"
+  regex: "r/^TEAM056\//"
+  team: "team-056"
+
+- name: "TEAM057"
+  regex: "r/^TEAM057\//"
+  team: "team-057"
+
+- name: "TEAM058"
+  regex: "r/^TEAM058\//"
+  team: "team-058"
+
+- name: "TEAM059"
+  regex: "r/^TEAM059\//"
+  team: "team-059"
+
+- name: "TEAM060"
+  regex: "r/^TEAM060\//"
+  team: "team-060"
+
+- name: "TEAM061"
+  regex: "r/^TEAM061\//"
+  team: "team-061"
+
+- name: "TEAM062"
+  regex: "r/^TEAM062\//"
+  team: "team-062"
+
+- name: "TEAM063"
+  regex: "r/^TEAM063\//"
+  team: "team-063"
+
+- name: "TEAM064"
+  regex: "r/^TEAM064\//"
+  team: "team-064"
+
+- name: "TEAM065"
+  regex: "r/^TEAM065\//"
+  team: "team-065"
+
+- name: "TEAM066"
+  regex: "r/^TEAM066\//"
+  team: "team-066"
+
+- name: "TEAM067"
+  regex: "r/^TEAM067\//"
+  team: "team-067"
+
+- name: "TEAM068"
+  regex: "r/^TEAM068\//"
+  team: "team-068"
+
+- name: "TEAM069"
+  regex: "r/^TEAM069\//"
+  team: "team-069"
+
+- name: "TEAM070"
+  regex: "r/^TEAM070\//"
+  team: "team-070"
+
+- name: "TEAM071"
+  regex: "r/^TEAM071\//"
+  team: "team-071"
+
+- name: "TEAM072"
+  regex: "r/^TEAM072\//"
+  team: "team-072"
+
+- name: "TEAM073"
+  regex: "r/^TEAM073\//"
+  team: "team-073"
+
+- name: "TEAM074"
+  regex: "r/^TEAM074\//"
+  team: "team-074"
+
+- name: "TEAM075"
+  regex: "r/^TEAM075\//"
+  team: "team-075"
+
+- name: "TEAM076"
+  regex: "r/^TEAM076\//"
+  team: "team-076"
+
+- name: "TEAM077"
+  regex: "r/^TEAM077\//"
+  team: "team-077"
+
+- name: "TEAM078"
+  regex: "r/^TEAM078\//"
+  team: "team-078"
+
+- name: "TEAM079"
+  regex: "r/^TEAM079\//"
+  team: "team-079"
+
+- name: "TEAM080"
+  regex: "r/^TEAM080\//"
+  team: "team-080"
+
+- name: "TEAM081"
+  regex: "r/^TEAM081\//"
+  team: "team-081"
+
+- name: "TEAM082"
+  regex: "r/^TEAM082\//"
+  team: "team-082"
+
+- name: "TEAM083"
+  regex: "r/^TEAM083\//"
+  team: "team-083"
+
+- name: "TEAM084"
+  regex: "r/^TEAM084\//"
+  team: "team-084"
+
+- name: "TEAM085"
+  regex: "r/^TEAM085\//"
+  team: "team-085"
+
+- name: "TEAM086"
+  regex: "r/^TEAM086\//"
+  team: "team-086"
+
+- name: "TEAM087"
+  regex: "r/^TEAM087\//"
+  team: "team-087"
+
+- name: "TEAM088"
+  regex: "r/^TEAM088\//"
+  team: "team-088"
+
+- name: "TEAM089"
+  regex: "r/^TEAM089\//"
+  team: "team-089"
+
+- name: "TEAM090"
+  regex: "r/^TEAM090\//"
+  team: "team-090"
+
+- name: "TEAM091"
+  regex: "r/^TEAM091\//"
+  team: "team-091"
+
+- name: "TEAM092"
+  regex: "r/^TEAM092\//"
+  team: "team-092"
+
+- name: "TEAM093"
+  regex: "r/^TEAM093\//"
+  team: "team-093"
+
+- name: "TEAM094"
+  regex: "r/^TEAM094\//"
+  team: "team-094"
+
+- name: "TEAM095"
+  regex: "r/^TEAM095\//"
+  team: "team-095"
+
+- name: "TEAM096"
+  regex: "r/^TEAM096\//"
+  team: "team-096"
+
+- name: "TEAM097"
+  regex: "r/^TEAM097\//"
+  team: "team-097"
+
+- name: "TEAM098"
+  regex: "r/^TEAM098\//"
+  team: "team-098"
+
+- name: "TEAM099"
+  regex: "r/^TEAM099\//"
+  team: "team-099"
+
+- name: "TEAM100"
+  regex: "r/^TEAM100\//"
+  team: "team-100"
