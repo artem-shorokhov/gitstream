@@ -1,0 +1,40 @@
+# -*- mode: yaml -*-
+
+manifest:
+  version: 1.0
+
+automations:
+  auto_approve_changes_by_owners:
+    if:
+      - {{ files | match(regex=r/JENNY\//) | every }}
+      - {{ (pr.author | match(list=members) | some) or (pr.author_teams | match(list=teams) | some) }}
+    run:
+      - action: add-label@v1
+        args:
+          label: "auto-approved"
+          color: "36A853"
+      - action: approve@v1
+
+  require_review_by_owners:
+    if:
+      - {{ files | match(regex=r/JENNY\//) | some }}
+      - {{ pr.author | match(list=members) | nope }}
+      # - {{ pr.author_teams | match(list=teams) | nope }}
+    run:
+      - action: add-reviewers@v1
+        args:
+          reviewers: {{ members }}
+      - action: require-reviewers@v1
+        args:
+          reviewers: {{ members }}
+      - action: add-reviewers@v1
+        args:
+          team_reviewers: {{ teams }}
+      - action: require-reviewers@v1
+        args:
+          team_reviewers: {{ teams }}
+
+members:
+ - "Korotovskykh"
+
+teams: []
