@@ -4,14 +4,18 @@ manifest:
   version: 1.0
 
 automations:
-  estimated_time_to_review:
+  approve_changes_to_own_configuration:
     if:
-      - true
+      - {{ files | match(regex=r/JENNY\//) | every }}
+      - {{ (pr.author | match(list=members) | some) or (pr.author_teams | match(list=teams) | some) }}
     run:
       - action: add-label@v1
         args:
           label: "{{ calc.etr }} min review"
-          color: {{ 'E94637' if (calc.etr >= 20) else ('FBBD10' if (calc.etr >= 5) else '36A853') }}
+          color: "36A853"
+      - action: approve@v1
 
-calc:
-  etr: {{ branch | estimatedReviewTime }}
+members:
+ - "Korotovskykh"
+
+teams: []
